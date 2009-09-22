@@ -26,7 +26,8 @@ public class Solutions {
 			insert(list, s);
 		}
 	}
-
+	
+	//把Solution s合并到链表l中每个solution中
     private static void insert(LinkedList<Solution> l, Solution s) {
 		 ListIterator<Solution> itr = l.listIterator();
 		 while (itr.hasNext()) {

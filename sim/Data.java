@@ -7,6 +7,11 @@ public class Data implements Comparable<Data>{
 	// when src updated, how many cache server will update at the same time
 	static int updateNum = 1;
 	static int cacheNum = 2;
+	// data object access num & update num
+	private int dataAccessNum = 0;
+	private int dataUpdateNum = 0;
+	static final double alpha = 0.5;
+	
     Server src;
     int seed = 0;
     Long time;
@@ -60,10 +65,33 @@ public class Data implements Comparable<Data>{
     	if (s == src) {
     		stale.addAll(fresh);
     		fresh.clear();
+    		//change dataUpdateNum 
+    		dataUpdateNum++;
     	} else {
     		stale.remove(s);
     		fresh.add(s);
     	}
+    }
+    
+    public void access()
+    {
+    	dataAccessNum++;
+    }
+    public double getAccessFreq()
+    {
+    	if(dataAccessNum==0||Access.totalAccessNum==0)
+    		return 0.0;
+    	return dataAccessNum/(double)Access.totalAccessNum;
+    }
+    public double getUpdateFreq()
+    {
+    	if(dataUpdateNum==0||Update.totalUpdateNum==0)
+    		return 0.0;
+    	return dataUpdateNum/(double)Update.totalUpdateNum;
+    }
+    public double computeM()
+    {
+    	return alpha*(1.0-getUpdateFreq())+(1.0-alpha)*getAccessFreq();
     }
 
 	/**

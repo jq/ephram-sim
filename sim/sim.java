@@ -71,7 +71,7 @@ public class sim {
 
 
 		e.addAll(a);
-		Collections.sort(e);System.out.println(e.size());
+		Collections.sort(e);
 		ArrayList<User> u = User.addUser(a, uFile, "query.txt");
 
 		//User[] u = User.getUsers();

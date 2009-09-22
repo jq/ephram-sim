@@ -3,11 +3,13 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 
 public class Cache {
 	static final int	FIFO_ALL = 0;
+	static final int THRESHOLD_ACCESS_TIME = 3000;
     int cachesize;
     double profit;
 
@@ -45,6 +47,7 @@ public class Cache {
     public void invalidate(Data data) {
     	if (fresh.remove(data)) {
     		stale.addFirst(data);
+    		System.out.println("one fresh data goes stale!!!!!!!!!!!!!!!!!!!!!!!");
     	}
     }
 
@@ -71,15 +74,39 @@ public class Cache {
     	}
     }
 
+//    // a new data add to cache
+//    public void addToCache(Data data, boolean isStale) {
+//    	if (fresh.size() + stale.size() == cachesize) {
+//        	if (stale.size() > 0) {
+//        		stale.removeFirst();
+//        	} else {
+//        		fresh.removeFirst();
+//        	}
+//
+//    	}
+//		if (isStale) {
+//			stale.addLast(data);
+//		} else {
+//		    fresh.addLast(data);
+//		}
+//    }
+    
     // a new data add to cache
     public void addToCache(Data data, boolean isStale) {
+    	//no need to cache
+    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
+    		return;
+    	//remove the data with minimum M
     	if (fresh.size() + stale.size() == cachesize) {
-        	if (stale.size() > 0) {
-        		stale.removeFirst();
-        	} else {
-        		fresh.removeFirst();
-        	}
-
+        	Data minData = findMinData();
+        	if(minData==null)
+        		System.out.println("111111111111111");
+        	if(data.computeM()<minData.computeM())
+        		return;
+        	if(inCacheFresh(minData))
+        		fresh.remove(minData);
+        	else
+        		stale.remove(minData);
     	}
 		if (isStale) {
 			stale.addLast(data);
@@ -87,6 +114,35 @@ public class Cache {
 		    fresh.addLast(data);
 		}
     }
+    
+    //find the data with minimum M
+    public Data findMinData()
+    {
+    	Data d = null;
+    	double m = 1.0;
+    	ListIterator<Data> itr = fresh.listIterator();
+    	while(itr.hasNext())
+    	{
+    		Data tmp = itr.next();
+    		if(tmp.computeM() < m)
+    		{
+    			d = tmp;
+    			m = tmp.computeM();  			
+    		}
+    	}
+    	ListIterator<Data> itr2 = stale.listIterator();
+    	while(itr2.hasNext())
+    	{
+    		Data tmp = itr2.next();
+    		if(tmp.computeM() < m)
+    		{
+    			d = tmp;
+    			m = tmp.computeM();
+    		}
+    	}
+    	return d;
+    }
+    
     public void run() throws IOException {
 		int accessNum = e.size();
 		for (int i = 0; i<accessNum; ++i) {

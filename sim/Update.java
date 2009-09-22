@@ -18,6 +18,10 @@ public class Update extends Event{
 	static int updateTime = 1000;
     Data d;
     Server s;
+    
+	//num of data update
+	static int totalUpdateNum = 0;
+	
     Update (Long time, Data d_) {
     	timestamp = time;
     	d = d_;
@@ -30,7 +34,10 @@ public class Update extends Event{
     }
 
     public void run(Cache c) {
-    	d.update(s);
+    	//change totalUpdateNum
+    	totalUpdateNum++;
+    	
+    	d.update(s);    	
     	if (d.src == s) {
     	    c.invalidate(d);
     	}
