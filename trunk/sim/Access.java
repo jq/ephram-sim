@@ -11,6 +11,8 @@ import webdb.Util;
 
 public class Access extends Event {
 	static int accessNum = 100;
+	//num of data access
+	static int totalAccessNum = 0;
     Data[] data;
     User u;
     int queryID;
@@ -26,6 +28,9 @@ public class Access extends Event {
     }
 
     public void run(Cache c) {
+    	//change total data access num
+    	totalAccessNum += data.length;
+    	
 		// try the combination
 		// if you get two data from one server, choose the longer time
     	if (!u.hasMoney()) {
@@ -35,12 +40,16 @@ public class Access extends Event {
     	int frashData = 0;
     	Solutions s = new Solutions();
     	for (int i = 0; i<data.length; i++) {
+    		//data access num++
+    		data[i].access();
+    		
     		Data d = data[i];
     		int dTime = 0;
         	if (c.inCacheFresh(d)) {
         		// no need to add to solution, since it is just one choice
         		s.insertCacheFresh();
         		c.adjustCache(d, true);
+        		System.out.println("inCacheFresh------------"+i+"---"+d);
 
         	} else if (c.inCacheStale(d)) {
         		// just try src of data and cache
@@ -50,11 +59,13 @@ public class Access extends Event {
         	    ss.add(staleCache);
         	    ss.add(freshServer);
         	    s.insert(ss);
+        	    System.out.println("inCacheStale------------"+i+"---"+d);
         	} else {
-        		// get it from servers
         		
+        		// get it from servers
         		ArrayList<Solution> ss = d.getSolutions();
         		s.insert(ss);
+        		System.out.println("notinCache------------"+i+"---"+d);
         	}
     	}
     	c.profit += s.pay(u, data.length, c);
