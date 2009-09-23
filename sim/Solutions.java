@@ -79,7 +79,7 @@ public class Solutions {
 		 while (itr.hasNext()) {
 			 Solution s1 = itr.next();
 			 double value = s1.tryPay(u, datalen);
-			 if (value > max) {
+			 if (value >= max) {
 				 max = value;
 				 s = s1;
 			 }

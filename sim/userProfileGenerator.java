@@ -161,6 +161,7 @@ class UserProfileGenerator {
     }     
     
     public static void main(String[] args) throws IOException{
+    	UserProfileGenerator u =
 		new UserProfileGenerator("userConfig.txt", "userProfile.txt");
 	}
 }   

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 
 public class Cache {
@@ -13,7 +12,9 @@ public class Cache {
     int cachesize;
     double profit;
 
-    static int cacheAccessTime = 100;
+    //static int cacheAccessTime = 100;
+    static int cacheAccessTime = 1000;
+    
     int totalSuccess;
     List<Event> e;
     ArrayList<User> u;
@@ -23,6 +24,10 @@ public class Cache {
     LinkedList<Data> fresh = new LinkedList<Data>();
     LinkedList<Data> stale = new LinkedList<Data>();
     Writer o;
+    
+	static int inCacheFreshCount = 0;
+	static int inCacheStaleCount = 0;
+	static int notinCacheCount = 0;
 
     public static Cache getCache(int t) {
     	switch (t) {
@@ -74,39 +79,15 @@ public class Cache {
     	}
     }
 
-//    // a new data add to cache
-//    public void addToCache(Data data, boolean isStale) {
-//    	if (fresh.size() + stale.size() == cachesize) {
-//        	if (stale.size() > 0) {
-//        		stale.removeFirst();
-//        	} else {
-//        		fresh.removeFirst();
-//        	}
-//
-//    	}
-//		if (isStale) {
-//			stale.addLast(data);
-//		} else {
-//		    fresh.addLast(data);
-//		}
-//    }
-    
     // a new data add to cache
     public void addToCache(Data data, boolean isStale) {
-    	//no need to cache
-    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
-    		return;
-    	//remove the data with minimum M
     	if (fresh.size() + stale.size() == cachesize) {
-        	Data minData = findMinData();
-        	if(minData==null)
-        		System.out.println("111111111111111");
-        	if(data.computeM()<minData.computeM())
-        		return;
-        	if(inCacheFresh(minData))
-        		fresh.remove(minData);
-        	else
-        		stale.remove(minData);
+        	if (stale.size() > 0) {
+        		stale.removeFirst();
+        	} else {
+        		fresh.removeFirst();
+        	}
+
     	}
 		if (isStale) {
 			stale.addLast(data);
@@ -114,6 +95,28 @@ public class Cache {
 		    fresh.addLast(data);
 		}
     }
+    
+//    // a new data add to cache
+//    public void addToCache(Data data, boolean isStale) {
+//    	//no need to cache
+//    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
+//    		return;
+//    	//remove the data with minimum M
+//    	if (fresh.size() + stale.size() == cachesize) {
+//        	Data minData = findMinData();
+//        	if(data.computeM()<minData.computeM())
+//        		return;
+//        	if(inCacheFresh(minData))
+//        		fresh.remove(minData);
+//        	else
+//        		stale.remove(minData);
+//    	}
+//		if (isStale) {
+//			stale.addLast(data);
+//		} else {
+//		    fresh.addLast(data);
+//		}
+//    }
     
     //find the data with minimum M
     public Data findMinData()
