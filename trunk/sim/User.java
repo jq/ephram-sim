@@ -17,7 +17,7 @@ public class User {
     int successQuery;
     int totalQuery;
 
-    static double budget = 200;
+    static double budget = 1000;
     double cost;
 
     //QC spec
@@ -34,8 +34,8 @@ public class User {
 		maxQod = qod;
 		minQos = nqos;
 		minQod = nqod;
-		nslope_qos = maxQos/relDeadline;
-		nslope_qod = maxQod/stale;
+		nslope_qos = maxQos/(double)relDeadline;
+		nslope_qod = maxQod/(double)stale;
 	}
 
 	String getString() {
@@ -67,12 +67,17 @@ public class User {
     }
 
     //the money you need to pay
-    public double pay_linearPositive(int responseTime, float datastale) {
+    public double pay_linearPositive(int responseTime, float datastale) {	
+    	
     	return getQos_linearPositive(responseTime) + getQod_linearPositive(datastale);
     }
 
     //the money you pay
     public double pay(int responseTime, float datastale) {
+    	
+    	System.out.println("------ResponseTime: "+responseTime+"------ pay:"+getQos_linearPositive(responseTime));
+    	System.out.println("------datastale: "+datastale+"------ pay:"+getQod_linearPositive(datastale));
+    	
     	double spend = pay_linearPositive(responseTime, datastale);
     	successQuery++;
     	if (!hasMoney()) {
@@ -194,7 +199,6 @@ public class User {
             	b.setLength(0);
             }
             out_p.close();
-
 
         }
 

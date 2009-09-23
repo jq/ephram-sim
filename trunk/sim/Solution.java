@@ -31,6 +31,9 @@ public class Solution {
 	void AddFresh() {
 		fresh++;
 	}
+	int getFresh() {
+		return fresh;
+	}
 	void setTime(int t) {
 		if (t > time) {
 			time = t;
@@ -41,7 +44,9 @@ public class Solution {
 	}
 
 	void addSolution(Solution s) {
-		fresh++;
+		//fresh++;
+		fresh += s.getFresh();
+		
 		setTime(s.time);
 		freshData.addAll(s.freshData);
 		staleData.addAll(s.staleData);
@@ -56,6 +61,14 @@ public class Solution {
     	return u.pay(time, stale);
 
 	}
+//	double tryPay(User u, float datalen) {
+//		float stale = (datalen - freshData.size()) / datalen;
+//		return u.pay_linearPositive(time, stale);
+//	}
+//	double pay(User u, float datalen) {
+//		float stale = (datalen - freshData.size()) / datalen;
+//		return u.pay(time, stale);
+//	}
 
 	void apply(Cache c) {
 		for (int i = 0; i< freshData.size(); ++i) {

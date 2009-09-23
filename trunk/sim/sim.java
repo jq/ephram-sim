@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 
 public class sim {
@@ -81,6 +80,9 @@ public class sim {
         c.init(cacheSize, e, d, (Server[])s.toArray(new Server[s.size()]), output, u);
         c.run();
         System.out.println("finish!");
+        System.out.println("inCacheFresh :"+Cache.inCacheFreshCount+" "+Cache.inCacheFreshCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
+        System.out.println("inCacheStale :"+Cache.inCacheStaleCount+" "+Cache.inCacheStaleCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
+        System.out.println("notInCache :"+Cache.notinCacheCount+" "+Cache.notinCacheCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
 	}
 
 }

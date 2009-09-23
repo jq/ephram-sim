@@ -10,7 +10,7 @@ public class Data implements Comparable<Data>{
 	// data object access num & update num
 	private int dataAccessNum = 0;
 	private int dataUpdateNum = 0;
-	static final double alpha = 0.5;
+	static final double alpha = 0.2;
 	
     Server src;
     int seed = 0;
@@ -39,7 +39,7 @@ public class Data implements Comparable<Data>{
     		slist.add(new Solution(1, fresh.get(j).accessTime, this, false));
     	}
     	for (int j = 0; j<stale.size(); ++j) {
-    		slist.add(new Solution(1, stale.get(j).accessTime, this, true));
+    		slist.add(new Solution(0, stale.get(j).accessTime, this, true));
     	}
     	return slist;
     }
