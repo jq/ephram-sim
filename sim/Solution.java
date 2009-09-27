@@ -61,24 +61,23 @@ public class Solution {
     	return u.pay(time, stale);
 
 	}
-//	double tryPay(User u, float datalen) {
-//		float stale = (datalen - freshData.size()) / datalen;
-//		return u.pay_linearPositive(time, stale);
-//	}
-//	double pay(User u, float datalen) {
-//		float stale = (datalen - freshData.size()) / datalen;
-//		return u.pay(time, stale);
-//	}
 
 	void apply(Cache c) {
 		for (int i = 0; i< freshData.size(); ++i) {
-			c.addToCache(freshData.get(i), false);
+			//maybe in stale
+			Data data = freshData.get(i);
+			if(c.inCacheStale(data))
+				c.stale.remove(data);
+			
+			c.addToCache(data, false);
 		}
 		for (int i = 0; i< staleData.size(); ++i) {
 			Data data = staleData.get(i);
 			if (c.inCacheStale(data)) {
 				c.adjustCache(data, true);
-			} else {
+			}else if(c.inCacheFresh(data)){
+				
+			}else {
 			    c.addToCache(data, true);
 			}
 		}
