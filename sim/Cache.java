@@ -79,15 +79,40 @@ public class Cache {
     	}
     }
 
+//    // a new data add to cache
+//    public void addToCache(Data data, boolean isStale) {
+//    	if (fresh.size() + stale.size() == cachesize) {
+//        	if (stale.size() > 0) {
+//        		stale.removeFirst();
+//        	} else {
+//        		fresh.removeFirst();
+//        	}
+//
+//    	}
+//		if (isStale) {
+//			stale.addLast(data);
+//		} else {
+//		    fresh.addLast(data);
+//		}
+//    }
+    
     // a new data add to cache
     public void addToCache(Data data, boolean isStale) {
+    	//no need to cache
+    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
+    	{
+    		System.out.println("data source access time is so short that we neednt cache it!!!!!!!!!");
+    		return;
+    	}
+    	//remove the data with minimum M
     	if (fresh.size() + stale.size() == cachesize) {
-        	if (stale.size() > 0) {
-        		stale.removeFirst();
-        	} else {
-        		fresh.removeFirst();
-        	}
-
+        	Data minData = findMinData();
+        	if(data.computeM()<minData.computeM())
+        		return;
+        	if(inCacheFresh(minData))
+        		fresh.remove(minData);
+        	else
+        		stale.remove(minData);
     	}
 		if (isStale) {
 			stale.addLast(data);
@@ -96,31 +121,6 @@ public class Cache {
 		}
     }
     
-//    // a new data add to cache
-//    public void addToCache(Data data, boolean isStale) {
-//    	//no need to cache
-//    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
-//    	{
-//    		System.out.println("data source access time is so short that we neednt cache it!!!!!!!!!");
-//    		return;
-//    	}
-//    	//remove the data with minimum M
-//    	if (fresh.size() + stale.size() == cachesize) {
-//        	Data minData = findMinData();
-//        	if(data.computeM()<minData.computeM())
-//        		return;
-//        	if(inCacheFresh(minData))
-//        		fresh.remove(minData);
-//        	else
-//        		stale.remove(minData);
-//    	}
-//		if (isStale) {
-//			stale.addLast(data);
-//		} else {
-//		    fresh.addLast(data);
-//		}
-//    }
-//    
     //find the data with minimum M
     public Data findMinData()
     {
