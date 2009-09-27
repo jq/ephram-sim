@@ -100,7 +100,10 @@ public class Cache {
 //    public void addToCache(Data data, boolean isStale) {
 //    	//no need to cache
 //    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
+//    	{
+//    		System.out.println("data source access time is so short that we neednt cache it!!!!!!!!!");
 //    		return;
+//    	}
 //    	//remove the data with minimum M
 //    	if (fresh.size() + stale.size() == cachesize) {
 //        	Data minData = findMinData();
@@ -117,34 +120,68 @@ public class Cache {
 //		    fresh.addLast(data);
 //		}
 //    }
-    
+//    
     //find the data with minimum M
     public Data findMinData()
     {
     	Data d = null;
-    	double m = 1.0;
-    	ListIterator<Data> itr = fresh.listIterator();
-    	while(itr.hasNext())
-    	{
-    		Data tmp = itr.next();
-    		if(tmp.computeM() < m)
-    		{
-    			d = tmp;
-    			m = tmp.computeM();  			
-    		}
-    	}
-    	ListIterator<Data> itr2 = stale.listIterator();
-    	while(itr2.hasNext())
-    	{
-    		Data tmp = itr2.next();
-    		if(tmp.computeM() < m)
-    		{
-    			d = tmp;
-    			m = tmp.computeM();
-    		}
-    	}
+    	double m = 1.0;   	
+	    ListIterator<Data> itr2 = stale.listIterator();
+	    while(itr2.hasNext())
+	    {
+	    	Data tmp = itr2.next();
+	    	if(tmp.computeM() < m)
+	    	{
+	    		d = tmp;
+	    		m = tmp.computeM();
+	    	}
+	    }    	
+	    ListIterator<Data> itr = fresh.listIterator();
+	    while(itr.hasNext())
+	    {
+	    	Data tmp = itr.next();
+	    	if(tmp.computeM() < m)
+	    	{
+	    		d = tmp;
+	    		m = tmp.computeM();  			
+	    	}
+	    }    	
     	return d;
     }
+//    //find the data with minimum M
+//    public Data findMinData()
+//    {
+//    	Data d = null;
+//    	double m = 1.0;
+//    	if(stale.size()>0)
+//    	{
+//	    	ListIterator<Data> itr2 = stale.listIterator();
+//	    	while(itr2.hasNext())
+//	    	{
+//	    		Data tmp = itr2.next();
+//	    		if(tmp.computeM() < m)
+//	    		{
+//	    			d = tmp;
+//	    			m = tmp.computeM();
+//	    		}
+//	    	}
+//    	}
+//    	else
+//    	{
+//	    	ListIterator<Data> itr = fresh.listIterator();
+//	    	while(itr.hasNext())
+//	    	{
+//	    		Data tmp = itr.next();
+//	    		if(tmp.computeM() < m)
+//	    		{
+//	    			d = tmp;
+//	    			m = tmp.computeM();  			
+//	    		}
+//	    	}
+//    	}
+//    	
+//    	return d;
+//    }
     
     public void run() throws IOException {
 		int accessNum = e.size();

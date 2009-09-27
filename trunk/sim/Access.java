@@ -54,12 +54,17 @@ public class Access extends Event {
 
         	} else if (c.inCacheStale(d)) {
         		// just try src of data and cache
-        	    ArrayList<Solution> ss = new ArrayList<Solution>(2);
-        	    Solution staleCache = new Solution(0, Cache.cacheAccessTime, d, true);
-        	    Solution freshServer = new Solution(0, d.src.accessTime, d, false);
-        	    ss.add(staleCache);
-        	    ss.add(freshServer);
-        	    s.insert(ss);
+//        	    ArrayList<Solution> ss = new ArrayList<Solution>(2);
+//        	    Solution staleCache = new Solution(0, Cache.cacheAccessTime, d, true);
+//        	    Solution freshServer = new Solution(0, d.src.accessTime, d, false);
+//        	    ss.add(staleCache);
+//        	    ss.add(freshServer);
+//        	    s.insert(ss);
+        		ArrayList<Solution> ss = d.getSolutions();
+        		Solution staleCache = new Solution(0, Cache.cacheAccessTime, d, true);
+        		ss.add(staleCache);
+        		s.insert(ss);
+        		
         	    System.out.println("inCacheStale------------"+i+"---"+d);
         	    Cache.inCacheStaleCount++;
         	} else {
