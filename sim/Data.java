@@ -10,7 +10,7 @@ public class Data implements Comparable<Data>{
 	// data object access num & update num
 	private int dataAccessNum = 0;
 	private int dataUpdateNum = 0;
-	static final double alpha = 0.5;
+	static final double alpha = 0.2;
 	
     Server src;
     int seed = 0;

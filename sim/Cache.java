@@ -125,7 +125,7 @@ public class Cache {
     public Data findMinData()
     {
     	Data d = null;
-    	double m = 1.0;   	
+    	double m = 1.1;   	
 	    ListIterator<Data> itr2 = stale.listIterator();
 	    while(itr2.hasNext())
 	    {
