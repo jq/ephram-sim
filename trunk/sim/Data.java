@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 public class Data implements Comparable<Data>{
@@ -7,6 +6,7 @@ public class Data implements Comparable<Data>{
 	// when src updated, how many cache server will update at the same time
 	static int updateNum = 1;
 	static int cacheNum = 2;
+	static int replicaNum = 4;
 	// data object access num & update num
 	private int dataAccessNum = 0;
 	private int dataUpdateNum = 0;
@@ -15,8 +15,15 @@ public class Data implements Comparable<Data>{
     Server src;
     int seed = 0;
     Long time;
-    ArrayList<Server> fresh = new ArrayList<Server>(cacheNum);
-    ArrayList<Server> stale = new ArrayList<Server>(cacheNum);
+//    ArrayList<Server> fresh = new ArrayList<Server>(cacheNum);
+//    ArrayList<Server> stale = new ArrayList<Server>(cacheNum);
+    
+    //replicas stored on other servers
+    ArrayList<Server> replicas = new ArrayList<Server>(replicaNum);
+    int[] unappliedUpdates = new int[replicaNum]; 
+    
+    int cacheUnappliedUpdate = 0;
+    
     Data(Server s) {
     	src = s;
     	time = new Long(0);
@@ -24,27 +31,43 @@ public class Data implements Comparable<Data>{
 
     public Server getRandomCacheServer() {
     	seed++;
-    	Server s = stale.get(seed % stale.size());
+    	//Server s = stale.get(seed % stale.size());
+    	Server s = replicas.get(seed % replicas.size());
     	if (s==null) {
     		throw new RuntimeException();
     	}
     	return s;
     }
 
-    public ArrayList<Solution> getSolutions() {
-    	ArrayList<Solution> slist = new ArrayList<Solution>(fresh.size() + stale.size()+1);
-    	slist.add(new Solution(1, src.accessTime, this, false));
-
-    	for (int j = 0; j<fresh.size(); ++j) {
-    		slist.add(new Solution(1, fresh.get(j).accessTime, this, false));
+//    public ArrayList<Solution> getSolutions() {
+//    	ArrayList<Solution> slist = new ArrayList<Solution>(fresh.size() + stale.size()+1);
+//    	slist.add(new Solution(1, src.accessTime, this, false));
+//
+//    	for (int j = 0; j<fresh.size(); ++j) {
+//    		slist.add(new Solution(1, fresh.get(j).accessTime, this, false));
+//    	}
+//    	for (int j = 0; j<stale.size(); ++j) {
+//    		slist.add(new Solution(0, stale.get(j).accessTime, this, true));
+//    	}
+//    	return slist;
+//    }
+    public ArrayList<Solution> getSolutions()
+    {
+    	ArrayList<Solution> sList = new ArrayList<Solution>(unappliedUpdates.length+1);
+    	sList.add(new Solution(1,src.accessTime,this,false));
+    	for (int j=0;j<replicas.size();++j)
+    	{
+    		if(unappliedUpdates[j]==0)//fresh data
+    		{
+    			sList.add(new Solution(1,replicas.get(j).accessTime,this,true));
+    		}
+    		else
+				sList.add(new Solution(0,replicas.get(j).accessTime,this,false)); 			
     	}
-    	for (int j = 0; j<stale.size(); ++j) {
-    		slist.add(new Solution(0, stale.get(j).accessTime, this, true));
-    	}
-    	return slist;
+    	return sList;
     }
 
-    //把688个数据分布到n个server上？
+    //把688个数据分布到n个server上
     static Data[] getDatas(Server[] s) {
         Data[] d = new Data[dataNum];
         int serverSize = s.length;
@@ -55,21 +78,43 @@ public class Data implements Comparable<Data>{
         	// save cache
         	for (int j = 1; j<=cacheNum; ++j) {
         		int cacheNum = (srcNum + j) % serverSize;
-        		d[i].stale.add(s[cacheNum]);
+        		//d[i].stale.add(s[cacheNum]);
+        		d[i].replicas.add(s[cacheNum]);
         	}
         }
         return d;
     }
 
-    public void update(Server s) {
-    	if (s == src) {
-    		stale.addAll(fresh);
-    		fresh.clear();
-    		//change dataUpdateNum 
+//    public void update(Server s) {
+//    	if (s == src) {
+//    		stale.addAll(fresh);
+//    		fresh.clear();
+//    		//change dataUpdateNum 
+//    		dataUpdateNum++;
+//    	} else {
+//    		stale.remove(s);
+//    		fresh.add(s);
+//    	}
+//    }
+    
+    public void update(Server s)
+    {
+    	if(s == src)
+    	{
+    		cacheUnappliedUpdate++;
+    		for(int i=0;i<unappliedUpdates.length;i++)
+    		{
+    			unappliedUpdates[i]++;
+    		}
     		dataUpdateNum++;
-    	} else {
-    		stale.remove(s);
-    		fresh.add(s);
+    	}
+    	else
+    	{
+    		for(int i=0;i<replicas.size();i++)
+    		{
+    			if(replicas.get(i).equals(s))
+    				unappliedUpdates[i]=0;
+    		}
     	}
     }
     

@@ -23,6 +23,8 @@ public class Cache {
     // cached data
     LinkedList<Data> fresh = new LinkedList<Data>();
     LinkedList<Data> stale = new LinkedList<Data>();
+//    LinkedList<Data> cacheData = new LinkedList<Data>();
+    
     Writer o;
     
 	static int inCacheFreshCount = 0;
@@ -148,40 +150,7 @@ public class Cache {
 	    }    	
     	return d;
     }
-//    //find the data with minimum M
-//    public Data findMinData()
-//    {
-//    	Data d = null;
-//    	double m = 1.0;
-//    	if(stale.size()>0)
-//    	{
-//	    	ListIterator<Data> itr2 = stale.listIterator();
-//	    	while(itr2.hasNext())
-//	    	{
-//	    		Data tmp = itr2.next();
-//	    		if(tmp.computeM() < m)
-//	    		{
-//	    			d = tmp;
-//	    			m = tmp.computeM();
-//	    		}
-//	    	}
-//    	}
-//    	else
-//    	{
-//	    	ListIterator<Data> itr = fresh.listIterator();
-//	    	while(itr.hasNext())
-//	    	{
-//	    		Data tmp = itr.next();
-//	    		if(tmp.computeM() < m)
-//	    		{
-//	    			d = tmp;
-//	    			m = tmp.computeM();  			
-//	    		}
-//	    	}
-//    	}
-//    	
-//    	return d;
-//    }
+
     
     public void run() throws IOException {
 		int accessNum = e.size();

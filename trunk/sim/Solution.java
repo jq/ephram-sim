@@ -51,6 +51,7 @@ public class Solution {
 		freshData.addAll(s.freshData);
 		staleData.addAll(s.staleData);
 	}
+	
     double tryPay(User u, float datalen) {
     	float stale = (datalen - fresh) / datalen;
     	return u.pay_linearPositive(time, stale);
@@ -62,26 +63,36 @@ public class Solution {
 
 	}
 
-	void apply(Cache c) {
-		for (int i = 0; i< freshData.size(); ++i) {
-			//maybe in stale
+//	void apply(Cache c) {
+//		for (int i = 0; i< freshData.size(); ++i) {
+//			//maybe in stale
+//			Data data = freshData.get(i);
+//			if(c.inCacheStale(data))
+//				c.stale.remove(data);
+//			
+//			c.addToCache(data, false);
+//		}
+//		for (int i = 0; i< staleData.size(); ++i) {
+//			Data data = staleData.get(i);
+//			if (c.inCacheStale(data)) {
+//				c.adjustCache(data, true);
+//			}else if(c.inCacheFresh(data)){
+//				
+//			}else {
+//			    c.addToCache(data, true);
+//			}
+//		}
+//	}
+	
+	void apply(Cache c)
+	{
+		for (int i = 0; i< freshData.size(); ++i) 
+		{
 			Data data = freshData.get(i);
-			if(c.inCacheStale(data))
-				c.stale.remove(data);
-			
+			if(c.inCacheFresh(data)||c.inCacheStale(data))
+				break;
 			c.addToCache(data, false);
 		}
-		for (int i = 0; i< staleData.size(); ++i) {
-			Data data = staleData.get(i);
-			if (c.inCacheStale(data)) {
-				c.adjustCache(data, true);
-			}else if(c.inCacheFresh(data)){
-				
-			}else {
-			    c.addToCache(data, true);
-			}
-		}
-
 	}
 
 

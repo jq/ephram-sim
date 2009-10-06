@@ -67,9 +67,14 @@ public class sim {
 		// read access from disk
     	ArrayList<Access> a = new ArrayList<Access>(40000);
 		Access.getAccess(d, a, asFile);
+		
+		//data crawler
+		ArrayList<Crawler> crawlerList = new ArrayList<Crawler>(40000);
+		Crawler.getCrawler(crawlerList);
 
 
 		e.addAll(a);
+		e.addAll(crawlerList);
 		Collections.sort(e);
 		ArrayList<User> u = User.addUser(a, uFile, "query.txt");
 
