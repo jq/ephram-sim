@@ -101,7 +101,7 @@ public class Cache {
     // a new data add to cache
     public void addToCache(Data data, boolean isStale) {
     	//no need to cache
-    	if(data.src.accessTime<THRESHOLD_ACCESS_TIME)
+    	if(data.src.getRecordAccessTime()<THRESHOLD_ACCESS_TIME)
     	{
     		System.out.println("data source access time is so short that we neednt cache it!!!!!!!!!");
     		return;

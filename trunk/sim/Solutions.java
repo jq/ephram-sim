@@ -73,12 +73,14 @@ public class Solutions {
 	}
 	public double pay(User u, int datalen, Cache c) {
 
-		double max = 0;
+//		double max = 0;
+		double max = -10;
 		Solution s = null;
 		 ListIterator<Solution> itr = list.listIterator();
 		 while (itr.hasNext()) {
 			 Solution s1 = itr.next();
-			 double value = s1.tryPay(u, datalen);
+//			 double value = s1.tryPay(u, datalen);
+			 double value = s1.tryPay(u, datalen)-s1.getDataPrice();
 			 if (value >= max) {
 				 max = value;
 				 s = s1;
@@ -88,6 +90,7 @@ public class Solutions {
 		 if (s!= null) {
 			 s.pay(u, datalen);
 			 s.apply(c);
+			 System.out.println(" DataPrice~~~~~~~~~~~"+s.getDataPrice());
 		 } else {
 			 throw new RuntimeException();
 		 }
