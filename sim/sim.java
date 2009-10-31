@@ -71,10 +71,21 @@ public class sim {
 		//data crawler
 		ArrayList<Crawler> crawlerList = new ArrayList<Crawler>(40000);
 		Crawler.getCrawler(crawlerList);
-
+		
+		//Server accessTime change
+		ArrayList<ServerChange> ServerChangeList = new ArrayList<ServerChange>(40000);
+		ServerChange.getServerChange(ServerChangeList);
+		//auto update server accesstime
+		ArrayList<UpdateServerLatency> UpdateServerLatencyList = new ArrayList<UpdateServerLatency>(40000);
+		UpdateServerLatency.getUpdateServerLatency(UpdateServerLatencyList);
+		
 
 		e.addAll(a);
 		e.addAll(crawlerList);
+		
+		e.addAll(ServerChangeList);
+		e.addAll(UpdateServerLatencyList);
+		
 		Collections.sort(e);
 		ArrayList<User> u = User.addUser(a, uFile, "query.txt");
 
@@ -88,6 +99,8 @@ public class sim {
         System.out.println("inCacheFresh :"+Cache.inCacheFreshCount+" "+Cache.inCacheFreshCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
         System.out.println("inCacheStale :"+Cache.inCacheStaleCount+" "+Cache.inCacheStaleCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
         System.out.println("notInCache :"+Cache.notinCacheCount+" "+Cache.notinCacheCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
+        
+        System.out.println("Total Crawl Time: "+Crawler.totalCrawlTime);
 	}
 
 }

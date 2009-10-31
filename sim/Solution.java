@@ -5,6 +5,8 @@ public class Solution {
 	private int fresh;
 	private int time;
 	
+	private double dataPrice;
+	
 	private LinkedList<Data> freshData;
 	private LinkedList<Data> staleData;
 	
@@ -13,10 +15,11 @@ public class Solution {
 		time = t;
 		freshData = new LinkedList<Data>();
 		staleData = new LinkedList<Data>();
+		dataPrice = 0.0;
 
 	}
 	
-	Solution (int f, int t, Data d, boolean isStale) {
+	Solution (int f, int t, Data d, boolean isStale, double dPrice) {
 		fresh = f;
 		time = t;
 		freshData = new LinkedList<Data>();
@@ -26,6 +29,7 @@ public class Solution {
 		} else {
 			freshData.addFirst(d);
 		}
+		dataPrice = dPrice;
 	}
 
 	void AddFresh() {
@@ -42,6 +46,13 @@ public class Solution {
 	int getTime() {
 		return time;
 	}
+	
+	double getDataPrice(){
+		return dataPrice;
+	}
+	void setDataPrice(double price){
+		dataPrice = price;
+	}
 
 	void addSolution(Solution s) {
 		//fresh++;
@@ -50,6 +61,7 @@ public class Solution {
 		setTime(s.time);
 		freshData.addAll(s.freshData);
 		staleData.addAll(s.staleData);
+		this.setDataPrice(dataPrice + s.getDataPrice());
 	}
 	
     double tryPay(User u, float datalen) {

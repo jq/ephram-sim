@@ -1,16 +1,24 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Data implements Comparable<Data>{
 	static final int dataNum = 688;
 	// when src updated, how many cache server will update at the same time
 	static int updateNum = 1;
-	static int cacheNum = 2;
+//	static int cacheNum = 2;
+	//number of cache server
 	static int replicaNum = 4;
 	// data object access num & update num
 	private int dataAccessNum = 0;
 	private int dataUpdateNum = 0;
 	static final double alpha = 0.2;
+	
+	int cacheUnappliedUpdate = 0;
+	
+	//src data price
+	double priceRandom = Math.random();
+	double priceLinear = 1.0;
 	
     Server src;
     int seed = 0;
@@ -20,13 +28,20 @@ public class Data implements Comparable<Data>{
     
     //replicas stored on other servers
     ArrayList<Server> replicas = new ArrayList<Server>(replicaNum);
-    int[] unappliedUpdates = new int[replicaNum]; 
+    private int[] unappliedUpdates = new int[replicaNum]; 
+    //replicas data price
+    private double[] replicaPriceRandom = new double[replicaNum];
+    private double[] replicaPriceLinear = new double[replicaNum];
     
-    int cacheUnappliedUpdate = 0;
     
     Data(Server s) {
     	src = s;
     	time = new Long(0);
+    	
+    	for(int i=0;i<replicaNum;i++)
+    	{
+    		replicaPriceRandom[i] = Math.random();
+    	}
     }
 
     public Server getRandomCacheServer() {
@@ -54,15 +69,15 @@ public class Data implements Comparable<Data>{
     public ArrayList<Solution> getSolutions()
     {
     	ArrayList<Solution> sList = new ArrayList<Solution>(unappliedUpdates.length+1);
-    	sList.add(new Solution(1,src.accessTime,this,false));
+    	sList.add(new Solution(1,src.getRecordAccessTime(),this,false,priceLinear));
     	for (int j=0;j<replicas.size();++j)
     	{
     		if(unappliedUpdates[j]==0)//fresh data
     		{
-    			sList.add(new Solution(1,replicas.get(j).accessTime,this,true));
+    			sList.add(new Solution(1,replicas.get(j).getRecordAccessTime(),this,true,replicaPriceLinear[j]));
     		}
     		else
-				sList.add(new Solution(0,replicas.get(j).accessTime,this,false)); 			
+				sList.add(new Solution(0,replicas.get(j).getRecordAccessTime(),this,false,replicaPriceLinear[j])); 			
     	}
     	return sList;
     }
@@ -76,10 +91,10 @@ public class Data implements Comparable<Data>{
         	d[i] = new Data(s[srcNum]);
 
         	// save cache
-        	for (int j = 1; j<=cacheNum; ++j) {
+        	for (int j = 1; j<=replicaNum; ++j) {
         		int cacheNum = (srcNum + j) % serverSize;
         		//d[i].stale.add(s[cacheNum]);
-        		d[i].replicas.add(s[cacheNum]);
+        		d[i].replicas.add(s[replicaNum]);
         	}
         }
         return d;
@@ -137,6 +152,25 @@ public class Data implements Comparable<Data>{
     public double computeM()
     {
     	return alpha*(1.0-getUpdateFreq())+(1.0-alpha)*getAccessFreq();
+    }
+    
+    public int[] getUnappliedUpdates()
+    {
+    	return unappliedUpdates;
+    }
+    
+    public double[] getReplicaPriceRandom()
+    {
+    	return replicaPriceRandom;
+    }
+    
+    public double[] getReplicaPriceLinear()
+    {
+    	for(int i = 0;i < replicaNum; i++)
+    	{
+    		replicaPriceLinear[i] = unappliedUpdates[i]>10? 0.0 : (10-unappliedUpdates[i])/10.0;
+    	}
+    	return replicaPriceLinear;
     }
 
 	/**

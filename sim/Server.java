@@ -15,9 +15,18 @@ import java.util.StringTokenizer;
 
 
 public class Server {
-    int accessTime;
+    private int accessTime;
+    //recently recoreded access time
+    private int recordAccessTime;
+    //varying access time
+    private int accessTimes[];
     Server(int time) {
     	accessTime = time;
+    	accessTimes = new int[5];
+    	for(int i=0;i<5;i++)
+    	{
+    		accessTimes[i]=accessTime+1000*(i-2);
+    	}
     }
 
     static Server[] getServers(int size) {
@@ -27,6 +36,26 @@ public class Server {
         }
 
         return s;
+    }
+    public int getAccessTime()
+    {
+    	return accessTime;
+    }
+    public void setAccessTime(int time)
+    {
+    	this.accessTime = time;
+    }
+    public int getRecordAccessTime()
+    {
+    	return recordAccessTime;
+    }
+    public void setRecordAccessTime(int time)
+    {
+    	this.recordAccessTime = time;
+    }
+    public int[] getAccessTimes()
+    {
+    	return accessTimes;
     }
 	public Server() {
 		// TODO Auto-generated constructor stub

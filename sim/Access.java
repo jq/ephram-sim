@@ -61,7 +61,7 @@ public class Access extends Event {
 //        	    ss.add(freshServer);
 //        	    s.insert(ss);
         		ArrayList<Solution> ss = d.getSolutions();
-        		Solution staleCache = new Solution(0, Cache.cacheAccessTime, d, true);
+        		Solution staleCache = new Solution(0, Cache.cacheAccessTime, d, true,0);
         		ss.add(staleCache);
         		s.insert(ss);
         		
