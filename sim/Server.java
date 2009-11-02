@@ -16,23 +16,37 @@ import java.util.StringTokenizer;
 
 public class Server {
     private int accessTime;
-    //recently recoreded access time
+    //recently recorded access time
     private int recordAccessTime;
     //varying access time
     private int accessTimes[];
-    Server(int time) {
+    
+    //server bandwidth(unit:KB/ms = MB/s)    
+    private double bandwidth;
+    //recently recorded bandwidth
+    private double recordBandwidth;
+    //varying bandwidth
+    private double bandwidths[];
+    
+    Server(int time,double bandwidth_) {
     	accessTime = time;
     	accessTimes = new int[5];
     	for(int i=0;i<5;i++)
     	{
-    		accessTimes[i]=accessTime+1000*(i-2);
+    		accessTimes[i] = accessTime + 1000*(i-2);
+    	}
+    	bandwidth = bandwidth_;
+    	bandwidths = new double[5];
+    	for(int i=0;i<5;i++)
+    	{
+    		bandwidths[i] = bandwidth + 0.1*(i-2);
     	}
     }
 
     static Server[] getServers(int size) {
         Server[] s = new Server[size];
         for (int i = 0; i<size; ++i) {
-        	s[i] = new Server (1000);
+        	s[i] = new Server (1000,0.1);
         }
 
         return s;
@@ -66,10 +80,12 @@ public class Server {
 		
 		ArrayList<Server> s = new ArrayList<Server>();
 		Random ran = new Random(); 
-		String line, idRange, timeRange;
+		String line, idRange, timeRange, bandwidthRange;
 		StringTokenizer line_tokenizer;
 		int time;
+		double bandwidth;
 		int idMin, idMax, tMin, tMax, idNum = 0;
+		double bwMin, bwMax = 0.0;
         try {                                                                                                                                
             BufferedReader brConfig = new BufferedReader (new FileReader (sconfig));    
 			
@@ -88,7 +104,8 @@ public class Server {
 	            	
 	            	idRange = line_tokenizer.nextToken();
 	            	timeRange = line_tokenizer.nextToken();                                                                                                                      
-                    
+                    bandwidthRange = line_tokenizer.nextToken();
+	            	
                     /*
                      * all fields: assume range is (min, max)
                     */
@@ -99,13 +116,22 @@ public class Server {
                     tMin = Integer.parseInt(timeRange.substring( 0, timeRange.indexOf('-')));
                     tMax = Integer.parseInt(timeRange.substring(timeRange.indexOf('-')+1, timeRange.length()));
                     
+                    bwMin = Double.parseDouble(bandwidthRange.substring(0, bandwidthRange.indexOf('-')));
+                    bwMax = Double.parseDouble(bandwidthRange.substring(bandwidthRange.indexOf('-')+1, bandwidthRange.length()));
+                    
+                    
                     for (int i=idMin; i<=idMax; i++){
                     	if (tMax == tMin){
                     		time = tMin;
                     	} else {
                     		time = tMin + ran.nextInt(tMax - tMin +1);
                     	}
-                    	Server svr = new Server(time * 1000);
+                    	if (bwMax == bwMin){
+                    		bandwidth = bwMin;
+                    	} else {
+                    		bandwidth = bwMin + ran.nextDouble()*(bwMax - bwMin);
+                    	}
+                    	Server svr = new Server(time * 1000, bandwidth);
                     	s.add(i, svr); 
                     }
                      
