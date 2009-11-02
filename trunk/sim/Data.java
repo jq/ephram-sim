@@ -16,6 +16,10 @@ public class Data implements Comparable<Data>{
 	
 	int cacheUnappliedUpdate = 0;
 	
+	//size if data object(unit: KB)
+	private int size;
+	static final int dataObjectSize = 500;
+	
 	//src data price
 	double priceRandom = Math.random();
 	double priceLinear = 1.0;
@@ -34,7 +38,7 @@ public class Data implements Comparable<Data>{
     private double[] replicaPriceLinear = new double[replicaNum];
     
     
-    Data(Server s) {
+    Data(Server s,int dataSize) {
     	src = s;
     	time = new Long(0);
     	
@@ -42,6 +46,8 @@ public class Data implements Comparable<Data>{
     	{
     		replicaPriceRandom[i] = Math.random();
     	}
+    	
+    	size = dataSize;
     }
 
     public Server getRandomCacheServer() {
@@ -88,7 +94,7 @@ public class Data implements Comparable<Data>{
         int serverSize = s.length;
         for (int i = 0; i<dataNum; ++i) {
         	int srcNum = i%serverSize;
-        	d[i] = new Data(s[srcNum]);
+        	d[i] = new Data(s[srcNum],dataObjectSize);
 
         	// save cache
         	for (int j = 1; j<=replicaNum; ++j) {
