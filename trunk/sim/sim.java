@@ -101,6 +101,17 @@ public class sim {
         System.out.println("notInCache :"+Cache.notinCacheCount+" "+Cache.notinCacheCount/(Cache.inCacheFreshCount+Cache.inCacheStaleCount+Cache.notinCacheCount+0.0));
         
         System.out.println("Total Crawl Time: "+Crawler.totalCrawlTime);
+        
+        int totalQuery=0;
+        int successQuery=0;
+        for(int i=0;i<u.size();i++)
+        {
+        	totalQuery += u.get(i).totalQuery;
+        	successQuery += u.get(i).successQuery;
+        }
+        System.out.println("totalQuery:   "+totalQuery);
+        System.out.println("successQuery:   "+successQuery);
+        System.out.println("SuccessRate:   "+successQuery/(double)totalQuery);
 	}
 
 }

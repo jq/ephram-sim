@@ -15,9 +15,12 @@ public class User {
 	int userID;
 	// as long as user pay, if user budget run out, all remaining queries do not success
     int successQuery;
+    int failQuery;
     int totalQuery;
 
+    //初始钱数
     static double budget = 1000;
+    //已花费
     double cost;
 
     //QC spec
@@ -36,6 +39,9 @@ public class User {
 		minQod = nqod;
 		nslope_qos = maxQos/(double)relDeadline;
 		nslope_qod = maxQod/(double)stale;
+		
+		successQuery = 0;
+		failQuery = 0;
 	}
 
 	String getString() {
@@ -51,34 +57,57 @@ public class User {
     	return budget > cost;
     }
 
+    //linear
     public double getQos_linearPositive(int time){
         if( time > relDeadline )
-            return 0;
+            return 0.0;
         else
             return nslope_qos * (relDeadline - time);
     }
 
     public double getQod_linearPositive(double staleness){
-
     	if (staleness >= stale )
             return 0.0;
         else
             return nslope_qod * (stale - staleness);
     }
-
+    
+    //step function
+    public double getQod_stepFunction(double staleness){
+    	if (staleness >= stale)
+    		return 0.0;
+    	else
+    		return maxQod;
+    }
+    
+    public double getQos_stepFunction(int time){
+    	if( time > relDeadline)
+    		return 0.0;
+    	else
+    		return maxQos;
+    }
+    
     //the money you need to pay
+    //linear
     public double pay_linearPositive(int responseTime, float datastale) {	
     	
     	return getQos_linearPositive(responseTime) + getQod_linearPositive(datastale);
     }
+    //step function
+    public double pay_stepFunction(int responseTime, float datastale) {	
+    	
+    	return getQos_stepFunction(responseTime) + getQod_stepFunction(datastale);
+    }
 
-    //the money you pay
+    //the money you pay(linear or step function)
     public double pay(int responseTime, float datastale) {
     	
     	System.out.println("------ResponseTime: "+responseTime+"------ pay:"+getQos_linearPositive(responseTime));
     	System.out.println("------datastale: "+datastale+"------ pay:"+getQod_linearPositive(datastale));
     	
     	double spend = pay_linearPositive(responseTime, datastale);
+//    	double spend = pay_stepFunction(responseTime, datastale);
+    	
     	successQuery++;
     	if (!hasMoney()) {
     		throw new RuntimeException("can't call pay if run out of money");

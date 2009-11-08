@@ -179,14 +179,6 @@ public class Data implements Comparable<Data>{
     	return replicaPriceLinear;
     }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public int compareTo(Data arg0) {
 		// TODO Auto-generated method stub
 		return time.compareTo(arg0.time);

@@ -48,7 +48,7 @@ public class Access extends Event {
         	if (c.inCacheFresh(d)) {
         		// no need to add to solution, since it is just one choice
         		s.insertCacheFresh();
-        		c.adjustCache(d, true);
+        		//c.adjustCache(d, true);
         		System.out.println("inCacheFresh------------"+i+"---"+d);
         		Cache.inCacheFreshCount++;
 
