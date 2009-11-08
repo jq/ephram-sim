@@ -49,7 +49,7 @@ public class Crawler extends Event
 					serverQosQod = replicasQosQod[j];
 					replicaNumber = j;
 					//记录更新服务器的access time
-					selectedServerAccTime = d.replicas.get(replicaNumber).getAccessTime();
+					selectedServerAccTime = d.replicas.get(replicaNumber).getRecordAccessTime();
 					totalCrawlTime += selectedServerAccTime;
 				}
 			}
@@ -84,6 +84,95 @@ public class Crawler extends Event
 //			c.fresh.add(d);
 //			
 //			totalCrawlTime += d.src.accessTime;
+//		}
+		
+		/**
+		 * problem 2B: Select a copy to refresh cache
+		 * baseline algo3: maximize Qos
+		 */
+//		for(int i=0;i<c.stale.size();i++)
+//		{
+//			Data d = c.stale.get(i);
+//			int selectedServerAccTime = d.src.getRecordAccessTime();
+//			double serverQos = d.src.getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.src.getRecordAccessTime())/relDeadline;
+//			//which replica to select;-1 means src
+//			int replicaNumber = -1;
+//			double[] replicasQos = new double[Data.replicaNum];
+//			for(int j=0;j<Data.replicaNum;j++)
+//			{
+//				replicasQos[j] = d.replicas.get(j).getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.replicas.get(j).getRecordAccessTime())/relDeadline;		
+//				if(replicasQos[j]<serverQos)
+//				{
+//					serverQos = replicasQos[j];
+//					replicaNumber = j;
+//					//记录更新服务器的access time
+//					selectedServerAccTime = d.replicas.get(replicaNumber).getRecordAccessTime();
+//					totalCrawlTime += selectedServerAccTime;
+//				}
+//			}
+//			if(replicaNumber == -1)
+//			{
+//				d.cacheUnappliedUpdate = 0;
+//				c.stale.remove(d);
+//				c.fresh.add(d);
+//				System.out.println("Crawl from src.............................");
+//			}
+//			else//refresh 
+//			{
+//				d.cacheUnappliedUpdate = d.getUnappliedUpdates()[replicaNumber]<d.cacheUnappliedUpdate? d.getUnappliedUpdates()[replicaNumber]:d.cacheUnappliedUpdate;
+//				if(d.cacheUnappliedUpdate==0)
+//				{
+//					c.stale.remove(d);
+//					c.fresh.add(d);
+//				}	
+//				System.out.println("Crawl from other copy.............................................");
+//			}
+//		}
+		
+		/**
+		 * problem 2B: Select a copy to refresh cache
+		 * baseline algo4: maximize Qod
+		 */
+//		for(int i=0;i<c.stale.size();i++)
+//		{
+//			Data d = c.stale.get(i);
+//			int selectedServerAccTime = d.src.getRecordAccessTime();
+//			double serverQod = 1.0;
+//			double serverQos = d.src.getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.src.getRecordAccessTime())/relDeadline;
+//			//which replica to select;-1 means src
+//			int replicaNumber = -1;
+//			double[] replicasQod = new double[Data.replicaNum];
+//			double[] replicasQos = new double[Data.replicaNum];
+//			for(int j=0;j<Data.replicaNum;j++)
+//			{
+//				replicasQod[j] = d.getUnappliedUpdates()[j]>10? 0.0:(10-d.getUnappliedUpdates()[j])/10.0;
+//				replicasQos[j] = d.replicas.get(j).getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.replicas.get(j).getRecordAccessTime())/relDeadline;		
+//				if(replicasQod[j]>=serverQod && replicasQos[j]<serverQos)
+//				{
+//					serverQod = replicasQod[j];
+//					replicaNumber = j;
+//					//记录更新服务器的access time
+//					selectedServerAccTime = d.replicas.get(replicaNumber).getRecordAccessTime();
+//					totalCrawlTime += selectedServerAccTime;
+//				}
+//			}
+//			if(replicaNumber == -1)
+//			{
+//				d.cacheUnappliedUpdate = 0;
+//				c.stale.remove(d);
+//				c.fresh.add(d);
+//				System.out.println("Crawl from src.............................");
+//			}
+//			else//refresh 
+//			{
+//				d.cacheUnappliedUpdate = d.getUnappliedUpdates()[replicaNumber]<d.cacheUnappliedUpdate? d.getUnappliedUpdates()[replicaNumber]:d.cacheUnappliedUpdate;
+//				if(d.cacheUnappliedUpdate==0)
+//				{
+//					c.stale.remove(d);
+//					c.fresh.add(d);
+//				}	
+//				System.out.println("Crawl from other copy.............................................");
+//			}		
 //		}
 		
 	}

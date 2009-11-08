@@ -79,6 +79,8 @@ public class Solutions {
 		 ListIterator<Solution> itr = list.listIterator();
 		 while (itr.hasNext()) {
 			 Solution s1 = itr.next();
+			 if(!s1.isValid(u, datalen))
+				 continue;
 //			 double value = s1.tryPay(u, datalen);
 			 double value = s1.tryPay(u, datalen)-s1.getDataPrice();
 			 if (value >= max) {
@@ -92,7 +94,9 @@ public class Solutions {
 			 s.apply(c);
 			 System.out.println(" DataPrice~~~~~~~~~~~"+s.getDataPrice());
 		 } else {
-			 throw new RuntimeException();
+			 u.failQuery++;
+			 return 0;
+			 //throw new RuntimeException();
 		 }
 		return max;
 	}

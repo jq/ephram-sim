@@ -74,6 +74,15 @@ public class Solution {
     	return u.pay(time, stale);
 
 	}
+	
+	boolean isValid(User u, float datalen) {
+		float stale = (datalen - fresh) / datalen;
+		if(u.getQod_linearPositive(stale) == 0)
+			return false;
+		if(u.getQos_linearPositive(time) == 0)
+			return false;
+		return true;
+	}
 
 //	void apply(Cache c) {
 //		for (int i = 0; i< freshData.size(); ++i) {

@@ -80,6 +80,12 @@ public class Cache {
     		}
     	}
     }
+    
+    /**
+     * Problem1: cache management
+     * 
+     * Algorithm1: FIFO
+     */
 
 //    // a new data add to cache
 //    public void addToCache(Data data, boolean isStale) {
@@ -97,6 +103,20 @@ public class Cache {
 //		    fresh.addLast(data);
 //		}
 //    }
+    
+    /**
+     * Problem1: cache management
+     * 
+     * Algorithm2: LRU
+     */
+    
+    
+    
+    /**
+     * Problem1: cache management
+     * 
+     * Algorithm3: M=alpha*（1-f（update））+（1-alpha）*f（access）
+     */
     
     // a new data add to cache
     public void addToCache(Data data, boolean isStale) {
