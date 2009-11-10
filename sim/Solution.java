@@ -112,7 +112,8 @@ public class Solution {
 			Data data = freshData.get(i);
 			if(c.inCacheFresh(data)||c.inCacheStale(data))
 				break;
-			c.addToCache(data, false);
+			//c.addToCache(data, false);
+			c.addToCache(data);
 		}
 	}
 
