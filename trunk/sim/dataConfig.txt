@@ -1,0 +1,8 @@
+# field0: data size class
+# field1: id range
+# field2: size(KB?)
+
+
+small	0-299	0-10
+medium	300-599	10-100
+large	600-687	100-1000

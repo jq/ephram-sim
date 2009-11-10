@@ -12,7 +12,6 @@ public class Cache {
     int cachesize;
     double profit;
 
-    //static int cacheAccessTime = 100;
     static int cacheAccessTime = 1000;
     
     int totalSuccess;
@@ -21,9 +20,9 @@ public class Cache {
     Data[] d;
     Server[] s;
     // cached data
-    LinkedList<Data> fresh = new LinkedList<Data>();
-    LinkedList<Data> stale = new LinkedList<Data>();
-//    LinkedList<Data> cacheData = new LinkedList<Data>();
+//    LinkedList<Data> fresh = new LinkedList<Data>();
+//    LinkedList<Data> stale = new LinkedList<Data>();
+    LinkedList<Data> cacheItems = new LinkedList<Data>();
     
     Writer o;
     
@@ -51,34 +50,57 @@ public class Cache {
 		u = u_;
 	}
 
-    public void invalidate(Data data) {
-    	if (fresh.remove(data)) {
-    		stale.addFirst(data);
-    		System.out.println("one fresh data goes stale!!!!!!!!!!!!!!!!!!!!!!!");
-    	}
-    }
+//    public void invalidate(Data data) {
+//    	if (fresh.remove(data)) {
+//    		stale.addFirst(data);
+//    		System.out.println("one fresh data goes stale!!!!!!!!!!!!!!!!!!!!!!!");
+//    	}
+//    }
+    
 
+//    public boolean inCacheFresh(Data data) {
+//    	return fresh.contains(data);
+//    }
     public boolean inCacheFresh(Data data) {
-    	return fresh.contains(data);
+    	if( cacheItems.contains(data) && data.cacheUnappliedUpdate==0)
+    		return true;
+    	return false;	
     }
 
+//    public boolean inCacheStale(Data data) {
+//    	return stale.contains(data);
+//    }
     public boolean inCacheStale(Data data) {
-    	return stale.contains(data);
+    	if(cacheItems.contains(data) && data.cacheUnappliedUpdate!=0)
+    		return true;
+    	return false;
     }
 
-    // a recent access to the data, and data is in cache
-    // we adjust its position in cache
-    public void adjustCache(Data data, boolean isStale) {
+    
+    
+//    public void adjustCache(Data data, boolean isStale) {
+//    	// must be in the cache
+//    	if (isStale) {
+//    		if (stale.remove(data)) {
+//    			stale.addLast(data);
+//    		}
+//    	} else {
+//    		if (fresh.remove(data)) {
+//    			fresh.addLast(data);
+//    		}
+//    	}
+//    }
+    
+    // a recent access to the data, and data is in cache, we adjust its position in cache
+    public void adjustCache(Data data) {
     	// must be in the cache
-    	if (isStale) {
-    		if (stale.remove(data)) {
-    			stale.addLast(data);
-    		}
-    	} else {
-    		if (fresh.remove(data)) {
-    			fresh.addLast(data);
-    		}
+    	if(!cacheItems.contains(data))
+    	{
+    		System.out.println("Not in cache!!!!!");
+    		return;
     	}
+    	cacheItems.remove(data);
+    	cacheItems.addLast(data);	
     }
     
     /**
@@ -86,22 +108,13 @@ public class Cache {
      * 
      * Algorithm1: FIFO
      */
-
-//    // a new data add to cache
-//    public void addToCache(Data data, boolean isStale) {
-//    	if (fresh.size() + stale.size() == cachesize) {
-//        	if (stale.size() > 0) {
-//        		stale.removeFirst();
-//        	} else {
-//        		fresh.removeFirst();
-//        	}
-//
-//    	}
-//		if (isStale) {
-//			stale.addLast(data);
-//		} else {
-//		    fresh.addLast(data);
-//		}
+    // a new data add to cache
+//    public void addToCache(Data data) {
+//    	if (cacheItems.size() == cachesize) 
+//    	{
+//        	cacheItems.removeFirst();
+//        }
+//		cacheItems.addLast(data);
 //    }
     
     /**
@@ -109,7 +122,13 @@ public class Cache {
      * 
      * Algorithm2: LRU
      */
-    
+//  public void addToCache(Data data) {
+//	if (cacheItems.size() == cachesize) 
+//	{
+//    	cacheItems.removeFirst();
+//    }
+//		cacheItems.addLast(data);
+//	}
     
     
     /**
@@ -119,7 +138,7 @@ public class Cache {
      */
     
     // a new data add to cache
-    public void addToCache(Data data, boolean isStale) {
+    public void addToCache(Data data) {
     	//no need to cache
     	if(data.src.getRecordAccessTime()<THRESHOLD_ACCESS_TIME)
     	{
@@ -127,20 +146,13 @@ public class Cache {
     		return;
     	}
     	//remove the data with minimum M
-    	if (fresh.size() + stale.size() == cachesize) {
+    	if (cacheItems.size() == cachesize) {
         	Data minData = findMinData();
         	if(data.computeM()<minData.computeM())
         		return;
-        	if(inCacheFresh(minData))
-        		fresh.remove(minData);
-        	else
-        		stale.remove(minData);
+        	cacheItems.remove(minData);
     	}
-		if (isStale) {
-			stale.addLast(data);
-		} else {
-		    fresh.addLast(data);
-		}
+		cacheItems.addLast(data);
     }
     
     //find the data with minimum M
@@ -148,17 +160,7 @@ public class Cache {
     {
     	Data d = null;
     	double m = 1.1;   	
-	    ListIterator<Data> itr2 = stale.listIterator();
-	    while(itr2.hasNext())
-	    {
-	    	Data tmp = itr2.next();
-	    	if(tmp.computeM() < m)
-	    	{
-	    		d = tmp;
-	    		m = tmp.computeM();
-	    	}
-	    }    	
-	    ListIterator<Data> itr = fresh.listIterator();
+	    ListIterator<Data> itr = cacheItems.listIterator();
 	    while(itr.hasNext())
 	    {
 	    	Data tmp = itr.next();
@@ -170,7 +172,6 @@ public class Cache {
 	    }    	
     	return d;
     }
-
     
     public void run() throws IOException {
 		int accessNum = e.size();

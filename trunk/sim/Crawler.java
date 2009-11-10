@@ -27,9 +27,13 @@ public class Crawler extends Event
 		 *  problem 2B: Select a copy to refresh cache
 		 *  algo1: beta*Qos+（1-beta）*Qod
 		 */
-		for(int i=0;i<c.stale.size();i++)
+		for(int i=0;i<c.cacheItems.size();i++)
 		{
-			Data d = c.stale.get(i);
+			Data d = c.cacheItems.get(i);
+			//fresh data
+			if(d.cacheUnappliedUpdate==0)
+				continue;
+			
 			int selectedServerAccTime = d.src.getRecordAccessTime();
 			double serverQod = 1.0;
 			double serverQos = d.src.getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.src.getRecordAccessTime())/relDeadline;
@@ -56,18 +60,11 @@ public class Crawler extends Event
 			if(replicaNumber == -1)
 			{
 				d.cacheUnappliedUpdate = 0;
-				c.stale.remove(d);
-				c.fresh.add(d);
 				System.out.println("Crawl from src.............................");
 			}
 			else//refresh 
 			{
 				d.cacheUnappliedUpdate = d.getUnappliedUpdates()[replicaNumber]<d.cacheUnappliedUpdate? d.getUnappliedUpdates()[replicaNumber]:d.cacheUnappliedUpdate;
-				if(d.cacheUnappliedUpdate==0)
-				{
-					c.stale.remove(d);
-					c.fresh.add(d);
-				}	
 				System.out.println("Crawl from other copy.............................................");
 			}		
 		}
@@ -76,12 +73,13 @@ public class Crawler extends Event
 		 * problem 2B: Select a copy to refresh cache
 		 * algo2: select source server
 		 */
-//		for(int i=0;i<c.stale.size();i++)
+//		for(int i=0;i<c.cacheItems.size();i++)
 //		{
-//			Data d = c.stale.get(i);
+//			Data d = c.cacheItems.get(i);
+//			//fresh data
+//			if(d.cacheUnappliedUpdate==0)
+//				continue;
 //			d.cacheUnappliedUpdate = 0;
-//			c.stale.remove(d);
-//			c.fresh.add(d);
 //			
 //			totalCrawlTime += d.src.accessTime;
 //		}
@@ -90,9 +88,12 @@ public class Crawler extends Event
 		 * problem 2B: Select a copy to refresh cache
 		 * baseline algo3: maximize Qos
 		 */
-//		for(int i=0;i<c.stale.size();i++)
+//		for(int i=0;i<c.cacheItems.size();i++)
 //		{
-//			Data d = c.stale.get(i);
+//			Data d = c.cacheItems.get(i);
+//			//skip fresh data
+//			if(d.cacheUnappliedUpdate==0)
+//				continue;
 //			int selectedServerAccTime = d.src.getRecordAccessTime();
 //			double serverQos = d.src.getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.src.getRecordAccessTime())/relDeadline;
 //			//which replica to select;-1 means src
@@ -113,18 +114,11 @@ public class Crawler extends Event
 //			if(replicaNumber == -1)
 //			{
 //				d.cacheUnappliedUpdate = 0;
-//				c.stale.remove(d);
-//				c.fresh.add(d);
 //				System.out.println("Crawl from src.............................");
 //			}
 //			else//refresh 
 //			{
 //				d.cacheUnappliedUpdate = d.getUnappliedUpdates()[replicaNumber]<d.cacheUnappliedUpdate? d.getUnappliedUpdates()[replicaNumber]:d.cacheUnappliedUpdate;
-//				if(d.cacheUnappliedUpdate==0)
-//				{
-//					c.stale.remove(d);
-//					c.fresh.add(d);
-//				}	
 //				System.out.println("Crawl from other copy.............................................");
 //			}
 //		}
@@ -133,9 +127,12 @@ public class Crawler extends Event
 		 * problem 2B: Select a copy to refresh cache
 		 * baseline algo4: maximize Qod
 		 */
-//		for(int i=0;i<c.stale.size();i++)
+//		for(int i=0;i<c.cacheItems.size();i++)
 //		{
-//			Data d = c.stale.get(i);
+//			Data d = c.cacheItems.get(i);
+//			//skip fresh data
+//			if(d.cacheUnappliedUpdate==0)
+//				continue;
 //			int selectedServerAccTime = d.src.getRecordAccessTime();
 //			double serverQod = 1.0;
 //			double serverQos = d.src.getRecordAccessTime()>relDeadline? 0.0:(relDeadline-d.src.getRecordAccessTime())/relDeadline;
@@ -159,18 +156,11 @@ public class Crawler extends Event
 //			if(replicaNumber == -1)
 //			{
 //				d.cacheUnappliedUpdate = 0;
-//				c.stale.remove(d);
-//				c.fresh.add(d);
 //				System.out.println("Crawl from src.............................");
 //			}
 //			else//refresh 
 //			{
 //				d.cacheUnappliedUpdate = d.getUnappliedUpdates()[replicaNumber]<d.cacheUnappliedUpdate? d.getUnappliedUpdates()[replicaNumber]:d.cacheUnappliedUpdate;
-//				if(d.cacheUnappliedUpdate==0)
-//				{
-//					c.stale.remove(d);
-//					c.fresh.add(d);
-//				}	
 //				System.out.println("Crawl from other copy.............................................");
 //			}		
 //		}

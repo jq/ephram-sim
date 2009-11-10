@@ -1,5 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 
 public class Data implements Comparable<Data>{
@@ -18,7 +21,7 @@ public class Data implements Comparable<Data>{
 	
 	//size if data object(unit: KB)
 	private int size;
-	static final int dataObjectSize = 500;
+	static final int dataObjectSize = 50;
 	
 	//src data price
 	double priceRandom = Math.random();
@@ -37,6 +40,7 @@ public class Data implements Comparable<Data>{
     private double[] replicaPriceRandom = new double[replicaNum];
     private double[] replicaPriceLinear = new double[replicaNum];
     
+    final static String DataConfig = "dataConfig.txt";
     
     Data(Server s,int dataSize) {
     	src = s;
@@ -89,19 +93,65 @@ public class Data implements Comparable<Data>{
     }
 
     //把688个数据分布到n个server上
+//    static Data[] getDatas(Server[] s) {
+//        Data[] d = new Data[dataNum];
+//        int serverSize = s.length;
+//        for (int i = 0; i<dataNum; ++i) {
+//        	int srcNum = i%serverSize;
+//        	d[i] = new Data(s[srcNum],dataObjectSize);
+//
+//        	// save cache
+//        	for (int j = 1; j<=replicaNum; ++j) {
+//        		int cacheNum = (srcNum + j) % serverSize;
+//        		//d[i].stale.add(s[cacheNum]);
+//        		d[i].replicas.add(s[cacheNum]);
+//        	}
+//        }
+//        return d;
+//    }
     static Data[] getDatas(Server[] s) {
         Data[] d = new Data[dataNum];
         int serverSize = s.length;
-        for (int i = 0; i<dataNum; ++i) {
-        	int srcNum = i%serverSize;
-        	d[i] = new Data(s[srcNum],dataObjectSize);
-
-        	// save cache
-        	for (int j = 1; j<=replicaNum; ++j) {
-        		int cacheNum = (srcNum + j) % serverSize;
-        		//d[i].stale.add(s[cacheNum]);
-        		d[i].replicas.add(s[replicaNum]);
+        
+        Random ran = new Random(); 
+        
+        String line;
+        StringTokenizer tokens;
+        try{
+        	BufferedReader brConfig = new BufferedReader(new FileReader(DataConfig));
+        	line = brConfig.readLine();
+        	while(line.startsWith("#")||line.equals(""))
+        	{
+        		line = brConfig.readLine();
         	}
+        	while(line != null)
+        	{
+        		//format:  small	0-299	0-10
+        		tokens = new StringTokenizer(line);
+        		tokens.nextToken();//skip class
+        		String idRange = tokens.nextToken();
+        		String sizeRange = tokens.nextToken();
+        		int idMin = Integer.parseInt(idRange.substring(0, idRange.indexOf('-')));
+        		int idMax = Integer.parseInt(idRange.substring(idRange.indexOf('-')+1,idRange.length()));
+        		int sizeMin = Integer.parseInt(sizeRange.substring(0, sizeRange.indexOf('-')));
+        		int sizeMax = Integer.parseInt(sizeRange.substring(sizeRange.indexOf('-')+1,sizeRange.length()));
+        		
+        		for(int i=idMin; i<=idMax; i++)
+        		{
+        			int srcNum = i%serverSize;
+        			//d[i] = new Data(s[srcNum],dataObjectSize);  
+        			d[i] = new Data(s[srcNum],sizeMin+ran.nextInt(sizeMax-sizeMin+1));       			
+        			// save replica
+        			for (int j = 1; j<=replicaNum; ++j) {
+        				int cacheNum = (srcNum + j) % serverSize;
+        				d[i].replicas.add(s[cacheNum]);
+        			}
+        		}
+        		line = brConfig.readLine();
+        	}
+        }
+        catch(Exception e){
+        	e.printStackTrace();
         }
         return d;
     }

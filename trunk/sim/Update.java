@@ -36,11 +36,12 @@ public class Update extends Event{
     public void run(Cache c) {
     	//change totalUpdateNum
     	totalUpdateNum++;
-    	
-    	d.update(s);    	
-    	if (d.src == s) {
-    	    c.invalidate(d);
-    	}
+  	
+    	d.update(s);
+
+//    	if (d.src == s) {
+//    	    c.invalidate(d);
+//    	}
     }
     static void getUpdate(Data[] d, List<Event> u) {
     	try {
